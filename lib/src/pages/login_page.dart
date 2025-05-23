@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/src/components/auth_input.dart';
+import 'package:mobile_app/src/pages/dashboard.dart';
 import 'package:mobile_app/src/pages/register.dart';
+import 'package:mobile_app/src/pages/tab_bar_view.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class LoginPage extends StatefulWidget {
@@ -10,6 +13,29 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  void _onSubmitForm() {
+    if (_formKey.currentState!.validate()) {
+      final email = _emailController.text.trim();
+      final password = _passwordController.text.trim();
+      debugPrint(email);
+      debugPrint(password);
+      // This is where you make a call to the backend for login using the above credentials
+
+      // for now Im just going to navigate to the dashboard
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const TabBarPage()),
+        (Route<dynamic> route) => false,
+      );
+    } else {
+      return;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,158 +53,178 @@ class _LoginPageState extends State<LoginPage> {
         height: double.infinity,
         width: double.infinity,
         padding: EdgeInsets.symmetric(horizontal: 10.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 10.h),
-            Text(
-              "Welcome to",
-              style: TextStyle(
-                fontSize: 24.sp,
-                fontWeight: FontWeight.w500,
-                color: const Color.fromRGBO(21, 10, 10, 1),
-                letterSpacing: 1,
-                height: 0.0,
-              ),
-            ),
-            SizedBox(height: 4.h),
-            Text(
-              "Our clothesline app",
-              style: TextStyle(
-                fontSize: 19.sp,
-                fontWeight: FontWeight.w500,
-                color: const Color.fromRGBO(21, 10, 10, 1),
-                letterSpacing: 1,
-                height: 0.0,
-              ),
-            ),
-            SizedBox(height: 12.h),
-            Text(
-              "Please log in to your account to continue",
-              style: TextStyle(
-                fontSize: 17.sp,
-                fontWeight: FontWeight.w500,
-                color: const Color.fromRGBO(21, 10, 10, 1),
-                letterSpacing: 1,
-                height: 0.0,
-              ),
-            ),
-            SizedBox(height: 4.h),
-            Text(
-              "Email or Phone number",
-              style: TextStyle(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.w500,
-                color: const Color.fromRGBO(21, 10, 10, 1),
-                letterSpacing: 1,
-                height: 0.0,
-              ),
-            ),
-            SizedBox(height: 0.2.h),
-            const TextField(
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-            SizedBox(height: 6.h),
-            Text(
-              "Password",
-              style: TextStyle(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.w500,
-                color: const Color.fromRGBO(21, 10, 10, 1),
-                letterSpacing: 1,
-                height: 0.0,
-              ),
-            ),
-            SizedBox(height: 0.2.h),
-            const TextField(
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-            SizedBox(height: 10.h),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Text(
-                "Forgot Password?",
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 10.h),
+              Text(
+                "Welcome to",
                 style: TextStyle(
-                  fontSize: 16.sp,
+                  fontSize: 24.sp,
                   fontWeight: FontWeight.w500,
-                  color: const Color.fromRGBO(244, 104, 72, 1),
+                  color: const Color.fromRGBO(21, 10, 10, 1),
                   letterSpacing: 1,
                   height: 0.0,
                 ),
               ),
-            ),
-            SizedBox(height: 4.h),
-            ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromRGBO(61, 63, 82, 1),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 10.w,
-                    vertical: 1.3.h,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(3.w),
-                  ),
-                  minimumSize: Size(double.infinity, 7.h)),
-              child: Text(
-                "Login",
+              SizedBox(height: 4.h),
+              Text(
+                "Our clothesline app",
                 style: TextStyle(
-                  fontSize: 17.sp,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
+                  fontSize: 19.sp,
+                  fontWeight: FontWeight.w500,
+                  color: const Color.fromRGBO(21, 10, 10, 1),
+                  letterSpacing: 1,
                   height: 0.0,
                 ),
               ),
-            ),
-            SizedBox(height: 4.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Don’t have an account?",
+              SizedBox(height: 12.h),
+              Text(
+                "Please log in to your account to continue",
+                style: TextStyle(
+                  fontSize: 17.sp,
+                  fontWeight: FontWeight.w500,
+                  color: const Color.fromRGBO(21, 10, 10, 1),
+                  letterSpacing: 1,
+                  height: 0.0,
+                ),
+              ),
+              SizedBox(height: 4.h),
+              Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Email or Phone number",
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w500,
+                        color: const Color.fromRGBO(21, 10, 10, 1),
+                        letterSpacing: 1,
+                        height: 0.0,
+                      ),
+                    ),
+                    SizedBox(height: 0.2.h),
+                    AuthInputField(
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return "Enter an email address";
+                        } else if (!RegExp(
+                                r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$')
+                            .hasMatch(value)) {
+                          return "Enter a valid email address";
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 6.h),
+                    Text(
+                      "Password",
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w500,
+                        color: const Color.fromRGBO(21, 10, 10, 1),
+                        letterSpacing: 1,
+                        height: 0.0,
+                      ),
+                    ),
+                    SizedBox(height: 0.2.h),
+                    AuthInputField(
+                      controller: _passwordController,
+                      obscureText: true,
+                      validator: (value) {
+                        if (value == null ||
+                            value.isEmpty ||
+                            value.length < 6) {
+                          return "Enter password";
+                        } else if (value.length < 7) {
+                          return "Password should be more than 5 characters";
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 10.h),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Text(
+                  "Forgot Password?",
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w500,
-                    color: const Color.fromRGBO(0, 0, 0, 1),
+                    color: const Color.fromRGBO(244, 104, 72, 1),
                     letterSpacing: 1,
                     height: 0.0,
                   ),
                 ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const RegisterPage(),
-                      ),
-                    );
-                  },
-                  child: Text(
-                    "  Please register",
+              ),
+              SizedBox(height: 4.h),
+              ElevatedButton(
+                onPressed: () => _onSubmitForm(),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromRGBO(61, 63, 82, 1),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 1.3.h,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(3.w),
+                    ),
+                    minimumSize: Size(double.infinity, 7.h)),
+                child: Text(
+                  "Login",
+                  style: TextStyle(
+                    fontSize: 17.sp,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                    height: 0.0,
+                  ),
+                ),
+              ),
+              SizedBox(height: 4.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Don’t have an account?",
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w500,
-                      color: const Color.fromRGBO(212, 52, 24, 1),
+                      color: const Color.fromRGBO(0, 0, 0, 1),
                       letterSpacing: 1,
                       height: 0.0,
                     ),
                   ),
-                ),
-              ],
-            )
-          ],
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const RegisterPage(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      "  Please register",
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w500,
+                        color: const Color.fromRGBO(212, 52, 24, 1),
+                        letterSpacing: 1,
+                        height: 0.0,
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );

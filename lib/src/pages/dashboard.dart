@@ -124,52 +124,6 @@ class _DashboardState extends State<Dashboard> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
-        height: 8.h,
-        padding: EdgeInsets.zero,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Container(
-                height: double.infinity,
-                color: const Color.fromRGBO(61, 63, 82, 1),
-                child: Center(
-                  child: Text(
-                    "Dashboard",
-                    style: TextStyle(
-                      fontSize: 17.sp,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                      letterSpacing: 1,
-                      height: 0.0,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(width: 0.2.w),
-            Expanded(
-              child: Container(
-                height: double.infinity,
-                color: const Color.fromRGBO(61, 63, 82, 1),
-                child: Center(
-                  child: Text(
-                    "History",
-                    style: TextStyle(
-                      fontSize: 17.sp,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                      letterSpacing: 1,
-                      height: 0.0,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
