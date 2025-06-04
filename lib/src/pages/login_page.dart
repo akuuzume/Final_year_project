@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/src/components/auth_input.dart';
-import 'package:mobile_app/src/pages/dashboard.dart';
 import 'package:mobile_app/src/pages/register.dart';
 import 'package:mobile_app/src/pages/tab_bar_view.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
