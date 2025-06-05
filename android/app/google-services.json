@@ -1,0 +1,87 @@
+{
+  "project_info": {
+    "project_number": "19841551899",
+    "firebase_url": "https://clotheslinemobile-default-rtdb.firebaseio.com",
+    "project_id": "clotheslinemobile",
+    "storage_bucket": "clotheslinemobile.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:19841551899:android:f8de411f987a84f98e72be",
+        "android_client_info": {
+          "package_name": "com.example.clothesline_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrClIl4zLg-Kc91wDf5l_Whdbv5XEUmNs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:19841551899:android:18d2224837bef05d8e72be",
+        "android_client_info": {
+          "package_name": "com.example.mobile_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrClIl4zLg-Kc91wDf5l_Whdbv5XEUmNs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:19841551899:android:3afd7db45d6b1bde8e72be",
+        "android_client_info": {
+          "package_name": "com.example.tester"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrClIl4zLg-Kc91wDf5l_Whdbv5XEUmNs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:19841551899:android:578cc1a6d0f6414b8e72be",
+        "android_client_info": {
+          "package_name": "com.sandrakuuzume.clotheslinemobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrClIl4zLg-Kc91wDf5l_Whdbv5XEUmNs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
