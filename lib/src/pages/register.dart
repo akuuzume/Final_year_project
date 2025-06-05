@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/src/components/auth_input.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -15,21 +16,30 @@ class _RegisterPageState extends State<RegisterPage> {
   final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _passwordController = TextEditingController(); // Add password controller
 
-  void _onSubmitForm() {
+  bool _isLoading = false; // For loading state
+
+  Future<void> _onSubmitForm() async {
     if (_formKey.currentState!.validate()) {
-      final firstName = _firstNameController.text.trim();
-      final lastName = _lastNameController.text.trim();
-      final email = _emailController.text.trim();
-      final phone = _phoneController.text.trim();
-      debugPrint(firstName);
-      debugPrint(lastName);
-      debugPrint(email);
-      debugPrint(phone);
-
-      // This is where you make a call to the backend for register using the above credentials
-    } else {
-      return;
+      setState(() => _isLoading = true);
+      try {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+        );
+        // Optionally, update displayName or save extra info to Firestore
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Registration successful!')),
+        );
+        Navigator.pop(context); // Go back to login or home
+      } on FirebaseAuthException catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message ?? 'Registration failed')),
+        );
+      } finally {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -188,12 +198,36 @@ class _RegisterPageState extends State<RegisterPage> {
                         return null;
                       },
                     ),
+                    SizedBox(height: 3.h),
+                    Text(
+                      "Password",
+                      style: TextStyle(
+                        fontSize: 17.sp,
+                        fontWeight: FontWeight.w400,
+                        color: const Color.fromRGBO(21, 10, 10, 1),
+                        letterSpacing: 1,
+                        height: 0.0,
+                      ),
+                    ),
+                    SizedBox(height: 0.2.h),
+                    AuthInputField(
+                      controller: _passwordController,
+                      obscureText: true,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return "Enter a password";
+                        } else if (value.length < 6) {
+                          return "Password must be at least 6 characters";
+                        }
+                        return null;
+                      },
+                    ),
                   ],
                 ),
               ),
               SizedBox(height: 10.h),
               ElevatedButton(
-                onPressed: () => _onSubmitForm(),
+                onPressed: _isLoading ? null : () => _onSubmitForm(),
                 style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromRGBO(61, 63, 82, 1),
                     padding: EdgeInsets.symmetric(
@@ -204,15 +238,17 @@ class _RegisterPageState extends State<RegisterPage> {
                       borderRadius: BorderRadius.circular(3.w),
                     ),
                     minimumSize: Size(double.infinity, 7.h)),
-                child: Text(
-                  "Sign up",
-                  style: TextStyle(
-                    fontSize: 17.sp,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                    height: 0.0,
-                  ),
-                ),
+                child: _isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : Text(
+                        "Sign up",
+                        style: TextStyle(
+                          fontSize: 17.sp,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                          height: 0.0,
+                        ),
+                      ),
               ),
             ],
           ),

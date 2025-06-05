@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_app/src/components/auth_input.dart';
 import 'package:mobile_app/src/pages/register.dart';
@@ -16,22 +17,28 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  void _onSubmitForm() {
-    if (_formKey.currentState!.validate()) {
-      final email = _emailController.text.trim();
-      final password = _passwordController.text.trim();
-      debugPrint(email);
-      debugPrint(password);
-      // This is where you make a call to the backend for login using the above credentials
+  bool _isLoading = false;
 
-      // for now Im just going to navigate to the dashboard
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const TabBarPage()),
-        (Route<dynamic> route) => false,
-      );
-    } else {
-      return;
+  Future<void> _onSubmitForm() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => _isLoading = true);
+      try {
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+        );
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const TabBarPage()),
+          (Route<dynamic> route) => false,
+        );
+      } on FirebaseAuthException catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message ?? 'Login failed')),
+        );
+      } finally {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -165,26 +172,29 @@ class _LoginPageState extends State<LoginPage> {
               ),
               SizedBox(height: 4.h),
               ElevatedButton(
-                onPressed: () => _onSubmitForm(),
+                onPressed: _isLoading ? null : () => _onSubmitForm(),
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromRGBO(61, 63, 82, 1),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 10.w,
-                      vertical: 1.3.h,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(3.w),
-                    ),
-                    minimumSize: Size(double.infinity, 7.h)),
-                child: Text(
-                  "Login",
-                  style: TextStyle(
-                    fontSize: 17.sp,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                    height: 0.0,
+                  backgroundColor: const Color.fromRGBO(61, 63, 82, 1),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10.w,
+                    vertical: 1.3.h,
                   ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(3.w),
+                  ),
+                  minimumSize: Size(double.infinity, 7.h),
                 ),
+                child: _isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : Text(
+                        "Login",
+                        style: TextStyle(
+                          fontSize: 17.sp,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                          height: 0.0,
+                        ),
+                      ),
               ),
               SizedBox(height: 4.h),
               Row(
