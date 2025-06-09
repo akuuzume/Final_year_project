@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mobile_app/src/components/auth_input.dart';
 import 'package:mobile_app/src/pages/register.dart';
 import 'package:mobile_app/src/pages/tab_bar_view.dart';
@@ -40,6 +41,18 @@ class _LoginPageState extends State<LoginPage> {
         setState(() => _isLoading = false);
       }
     }
+  }
+
+  Future<UserCredential?> signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    if (googleUser == null) return null; // User canceled
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
   @override
@@ -195,6 +208,19 @@ class _LoginPageState extends State<LoginPage> {
                           height: 0.0,
                         ),
                       ),
+              ),
+              SizedBox(height: 4.h),
+              ElevatedButton.icon(
+                icon: Image.asset('assets/images/google_logo.png', height: 24),
+                label: const Text('Sign in with Google'),
+                onPressed: () async {
+                  final userCredential = await signInWithGoogle();
+                  if (userCredential != null) {
+                    // Navigate to home or show success
+                  } else {
+                    // Handle cancel/error
+                  }
+                },
               ),
               SizedBox(height: 4.h),
               Row(

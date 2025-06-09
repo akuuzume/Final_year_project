@@ -13,7 +13,12 @@
           "package_name": "com.example.clothesline_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "19841551899-4j8l95t0t75m1j1oov0c6n5t2bmhqhfb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBrClIl4zLg-Kc91wDf5l_Whdbv5XEUmNs"
@@ -21,7 +26,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "19841551899-4j8l95t0t75m1j1oov0c6n5t2bmhqhfb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "19841551899-ia8rcjs194frn2h0ipdc5bkj3d080ii4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.tester"
+              }
+            }
+          ]
         }
       }
     },
@@ -32,7 +49,12 @@
           "package_name": "com.example.mobile_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "19841551899-4j8l95t0t75m1j1oov0c6n5t2bmhqhfb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBrClIl4zLg-Kc91wDf5l_Whdbv5XEUmNs"
@@ -40,7 +62,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "19841551899-4j8l95t0t75m1j1oov0c6n5t2bmhqhfb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "19841551899-ia8rcjs194frn2h0ipdc5bkj3d080ii4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.tester"
+              }
+            }
+          ]
         }
       }
     },
@@ -51,7 +85,12 @@
           "package_name": "com.example.tester"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "19841551899-4j8l95t0t75m1j1oov0c6n5t2bmhqhfb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBrClIl4zLg-Kc91wDf5l_Whdbv5XEUmNs"
@@ -59,7 +98,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "19841551899-4j8l95t0t75m1j1oov0c6n5t2bmhqhfb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "19841551899-ia8rcjs194frn2h0ipdc5bkj3d080ii4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.tester"
+              }
+            }
+          ]
         }
       }
     },
@@ -70,7 +121,20 @@
           "package_name": "com.sandrakuuzume.clotheslinemobile"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "19841551899-qiqrl3tlbgvbrfj4oc22o5qec3b0q1mc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sandrakuuzume.clotheslinemobile",
+            "certificate_hash": "691c75459e64b1d59a230fb99d9dda63450c58b9"
+          }
+        },
+        {
+          "client_id": "19841551899-4j8l95t0t75m1j1oov0c6n5t2bmhqhfb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBrClIl4zLg-Kc91wDf5l_Whdbv5XEUmNs"
@@ -78,7 +142,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "19841551899-4j8l95t0t75m1j1oov0c6n5t2bmhqhfb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "19841551899-ia8rcjs194frn2h0ipdc5bkj3d080ii4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.tester"
+              }
+            }
+          ]
         }
       }
     }

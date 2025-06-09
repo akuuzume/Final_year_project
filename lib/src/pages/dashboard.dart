@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-
+import '../components/weather_service.dart'; // Make sure this path is correct
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -11,6 +11,20 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   bool _status = true;
+  Map<String, dynamic>? _weatherData;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchWeather();
+  }
+
+  void fetchWeather() async {
+    final data = await WeatherService().fetchWeather('Accra');
+    setState(() {
+      _weatherData = data;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +71,28 @@ class _DashboardState extends State<Dashboard> {
                       "assets/images/hero.png",
                       width: 80.w,
                     ),
-                    SizedBox(
-                      height: 8.h,
-                    ),
+                    SizedBox(height: 2.h),
+                    if (_weatherData != null)
+                      Column(
+                        children: [
+                          Text(
+                            "Weather in ${_weatherData!['name']}",
+                            style: TextStyle(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            "${_weatherData!['weather'][0]['main']} - ${_weatherData!['main']['temp']}°C",
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                            ),
+                          ),
+                        ],
+                      )
+                    else
+                      const CircularProgressIndicator(),
+                    SizedBox(height: 8.h),
                     Container(
                       color: Colors.white,
                       width: 80.w,

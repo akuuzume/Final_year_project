@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_app/src/components/auth_input.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -47,6 +48,18 @@ class _RegisterPageState extends State<RegisterPage> {
         setState(() => _isLoading = false);
       }
     }
+  }
+
+  Future<UserCredential?> signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    if (googleUser == null) return null; // User canceled
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
   @override
@@ -255,6 +268,40 @@ class _RegisterPageState extends State<RegisterPage> {
                           height: 0.0,
                         ),
                       ),
+              ),
+              SizedBox(height: 2.h),
+              ElevatedButton.icon(
+                icon: Image.asset(
+                  'assets/images/google_logo.png',
+                  height: 24,
+                  width: 24,
+                ),
+                label: const Text(
+                  'Sign in with Google',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    color: Colors.black, // Google button text is usually black
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black,
+                  minimumSize: Size(double.infinity, 50),
+                  side: const BorderSide(color: Colors.grey),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  elevation: 0,
+                ),
+                onPressed: () async {
+                  final userCredential = await signInWithGoogle();
+                  if (userCredential != null) {
+                    // Navigate to home or show success
+                  } else {
+                    // Handle cancel/error
+                  }
+                },
               ),
             ],
           ),

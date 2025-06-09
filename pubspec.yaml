@@ -16,7 +16,8 @@ dependencies:
   cloud_firestore: ^4.16.0
   firebase_database: ^10.5.4
   email_validator: ^2.1.17
-
+  google_sign_in: ^6.2.1
+  http: ^0.13.6
   cupertino_icons: ^1.0.6
   responsive_sizer: ^3.3.1
 
