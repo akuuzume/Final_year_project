@@ -26,8 +26,8 @@ class _HistoryPageState extends State<HistoryPage> {
     if (snapshot.exists) {
       final data = snapshot.value as Map<dynamic, dynamic>;
       data.forEach((key, value) {
-        if (value is Map && value['status'] != null) {
-          statuses.add(value['status'].toString());
+        if (value is Map && value['cover_status'] != null) {
+          statuses.add(value['cover_status'].toString());
         }
       });
     }

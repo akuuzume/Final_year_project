@@ -16,7 +16,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
-  final _passwordController = TextEditingController(); // Add password controller
+  final _passwordController =
+      TextEditingController(); // Add password controller
 
   bool _isLoading = false; // For loading state
 
@@ -24,9 +25,14 @@ class _RegisterPageState extends State<RegisterPage> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
       try {
+        final email = _emailController.text.trim();
+        final password = _passwordController.text.trim();
+        debugPrint('Email: "$email"');
+        debugPrint('Email code units: ${email.codeUnits}');
+
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: _emailController.text.trim(),
-          password: _passwordController.text.trim(),
+          email: email,
+          password: password,
         );
         // Optionally, update displayName or save extra info to Firestore
         ScaffoldMessenger.of(context).showSnackBar(
