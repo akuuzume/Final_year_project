@@ -6,6 +6,7 @@ import 'package:mobile_app/src/pages/register.dart';
 import 'package:mobile_app/src/pages/tab_bar_view.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -43,17 +44,27 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Future<UserCredential?> signInWithGoogle() async {
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-    if (googleUser == null) return null; // User canceled
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-    return await FirebaseAuth.instance.signInWithCredential(credential);
-  }
+ final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+ Future<UserCredential?> signInWithGoogle() async {
+   try {
+     final googleUser = await _googleSignIn.signIn();
+
+     if (googleUser == null) return null;
+
+     final googleAuth = await googleUser.authentication;
+
+     final credential = GoogleAuthProvider.credential(
+       idToken: googleAuth.idToken,
+       accessToken: googleAuth.serverAuthCode, // ✅ Note: accessToken replaced by serverAuthCode in v7
+     );
+
+     return await FirebaseAuth.instance.signInWithCredential(credential);
+   } catch (e) {
+     print('Google sign-in error: $e');
+     return null;
+   }
+ }
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import '../components/weather_service.dart'; // Make sure this path is correct
+import 'package:mobile_app/src/components/weather_service.dart';
+
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -20,7 +21,7 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void fetchWeather() async {
-    final data = await WeatherService().fetchWeather('Accra');
+    final data = await WeatherService().getWeatherByCity('Accra');
     setState(() {
       _weatherData = data;
     });
