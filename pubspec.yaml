@@ -16,14 +16,18 @@ dependencies:
   responsive_sizer: ^3.3.1
 
 
+  firebase_core: any
+  http: any
+  cloud_firestore: any
+  firebase_database: any
+  firebase_auth: any
+  google_sign_in: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  firebase_core: ^3.14.0
   firebase_auth: ^5.6.0
   firebase_database: ^11.3.7
   cloud_firestore: ^5.6.9
-  google_sign_in: ^6.1.4
   email_validator: ^3.0.0
   http: ^1.4.0
   cupertino_icons: ^1.0.6

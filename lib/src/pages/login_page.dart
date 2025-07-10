@@ -56,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
 
      final credential = GoogleAuthProvider.credential(
        idToken: googleAuth.idToken,
-       accessToken: googleAuth.serverAuthCode, // ✅ Note: accessToken replaced by serverAuthCode in v7
+       accessToken: googleAuth.accessToken,
      );
 
      return await FirebaseAuth.instance.signInWithCredential(credential);
@@ -75,8 +75,8 @@ class _LoginPageState extends State<LoginPage> {
             fit: BoxFit.cover,
             image: const AssetImage("assets/images/sky.png"),
             colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.5),
-              BlendMode.dstATop,
+              Colors.black.withAlpha(128),
+              BlendMode.darken,
             ),
           ),
         ),

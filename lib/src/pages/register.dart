@@ -63,7 +63,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
       final credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken,
-        accessToken: googleAuth.serverAuthCode, // ✅ Note: accessToken replaced by serverAuthCode in v7
+        accessToken: googleAuth.accessToken,
       );
 
       return await FirebaseAuth.instance.signInWithCredential(credential);
@@ -81,8 +81,8 @@ class _RegisterPageState extends State<RegisterPage> {
             fit: BoxFit.cover,
             image: const AssetImage("assets/images/sky.png"),
             colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.5),
-              BlendMode.dstATop,
+              Colors.black.withAlpha(128),
+              BlendMode.darken,
             ),
           ),
         ),
@@ -285,6 +285,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   'assets/images/google_logo.png',
                   height: 24,
                   width: 24,
+
                 ),
                 label: const Text(
                   'Sign in with Google',
@@ -305,13 +306,26 @@ class _RegisterPageState extends State<RegisterPage> {
                   elevation: 0,
                 ),
                 onPressed: () async {
-                  final userCredential = await signInWithGoogle();
-                  if (userCredential != null) {
-                    // Navigate to home or show success
-                  } else {
-                    // Handle cancel/error
-                  }
-                },
+                try {
+                final userCredential = await signInWithGoogle();
+                if (userCredential != null) {
+                Navigator.pushReplacementNamed(context, '/dashboard');
+                } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Authentication failed.')),
+                );
+                }
+                } on FirebaseAuthException catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(e.message ?? 'An error occurred')),
+                );
+                } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Unexpected error occurred')),
+                );
+                }
+                }
+
               ),
             ],
           ),
