@@ -17,6 +17,7 @@ class AuthInputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      controller: controller,
       decoration: const InputDecoration(
         filled: true,
         fillColor: Colors.white,

@@ -3,7 +3,7 @@ import 'package:mobile_app/src/components/auth_input.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -19,7 +19,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController =
-      TextEditingController(); // Add password controller
+  TextEditingController(); // Add password controller
 
   bool _isLoading = false; // For loading state
 
@@ -32,11 +32,24 @@ class _RegisterPageState extends State<RegisterPage> {
         debugPrint('Email: "$email"');
         debugPrint('Email code units: ${email.codeUnits}');
 
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        // Create user with email and password
+        UserCredential userCredential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(
           email: email,
           password: password,
         );
-        // Optionally, update displayName or save extra info to Firestore
+
+        if (userCredential.user != null) {
+          await FirebaseFirestore.instance.collection('users').doc(
+              userCredential.user!.uid).set({
+            'firstName': _firstNameController.text.trim(),
+            'lastName': _lastNameController.text.trim(),
+            'phone': _phoneController.text.trim(),
+            'email': email,
+            'createdAt': FieldValue.serverTimestamp(),
+            // Optional: to record registration time
+          });
+        }
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Registration successful!')),
         );
@@ -50,6 +63,7 @@ class _RegisterPageState extends State<RegisterPage> {
       }
     }
   }
+
 
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
@@ -175,7 +189,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       controller: _lastNameController,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return "First name can't be empty";
+                          return "Last name can't be empty";
                         }
                         return null;
                       },
@@ -199,7 +213,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         if (value == null || value.trim().isEmpty) {
                           return "Enter an email address";
                         } else if (!RegExp(
-                                r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$')
+                            r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$')
                             .hasMatch(value)) {
                           return "Enter a valid email address";
                         }
@@ -220,9 +234,10 @@ class _RegisterPageState extends State<RegisterPage> {
                     SizedBox(height: 0.2.h),
                     AuthInputField(
                       controller: _phoneController,
+                      keyboardType: TextInputType.phone,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return "First name can't be empty";
+                          return "Phone number cannot be empty";
                         }
                         return null;
                       },
@@ -270,61 +285,61 @@ class _RegisterPageState extends State<RegisterPage> {
                 child: _isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
                     : Text(
-                        "Sign up",
-                        style: TextStyle(
-                          fontSize: 17.sp,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                          height: 0.0,
-                        ),
-                      ),
+                  "Sign up",
+                  style: TextStyle(
+                    fontSize: 17.sp,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                    height: 0.0,
+                  ),
+                ),
               ),
               SizedBox(height: 2.h),
               ElevatedButton.icon(
-                icon: Image.asset(
-                  'assets/images/google_logo.png',
-                  height: 24,
-                  width: 24,
+                  icon: Image.asset(
+                    'assets/images/google_logo.png',
+                    height: 24,
+                    width: 24,
 
-                ),
-                label: const Text(
-                  'Sign in with Google',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                    color: Colors.black, // Google button text is usually black
                   ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black,
-                  minimumSize: const Size(double.infinity, 50),
-                  side: const BorderSide(color: Colors.grey),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                  label: const Text(
+                    'Sign in with Google',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                      color: Colors.black, // Google button text is usually black
+                    ),
                   ),
-                  elevation: 0,
-                ),
-                onPressed: () async {
-                try {
-                final userCredential = await signInWithGoogle();
-                if (userCredential != null) {
-                Navigator.pushReplacementNamed(context, '/dashboard');
-                } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Authentication failed.')),
-                );
-                }
-                } on FirebaseAuthException catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(e.message ?? 'An error occurred')),
-                );
-                } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Unexpected error occurred')),
-                );
-                }
-                }
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black,
+                    minimumSize: const Size(double.infinity, 50),
+                    side: const BorderSide(color: Colors.grey),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    elevation: 0,
+                  ),
+                  onPressed: () async {
+                    try {
+                      final userCredential = await signInWithGoogle();
+                      if (userCredential != null) {
+                        Navigator.pushReplacementNamed(context, '/dashboard');
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Authentication failed.')),
+                        );
+                      }
+                    } on FirebaseAuthException catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(e.message ?? 'An error occurred')),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Unexpected error occurred')),
+                      );
+                    }
+                  }
 
               ),
             ],
