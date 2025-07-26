@@ -22,6 +22,7 @@ dependencies:
   firebase_database: any
   firebase_auth: any
   google_sign_in: any
+  device_preview: ^1.3.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

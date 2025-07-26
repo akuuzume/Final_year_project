@@ -47,7 +47,7 @@ class _RegisterPageState extends State<RegisterPage> {
             'phone': _phoneController.text.trim(),
             'email': email,
             'createdAt': FieldValue.serverTimestamp(),
-            // Optional: to record registration time
+
           });
         }
         ScaffoldMessenger.of(context).showSnackBar(

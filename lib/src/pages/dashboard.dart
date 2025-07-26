@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:mobile_app/src/components/weather_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mobile_app/src/pages/open_app.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -23,7 +25,21 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void _signOut() {
-    print("User signed out!");
+    try {
+      FirebaseAuth.instance.signOut();
+      print("User signed out!");
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const OpenApp()),
+            (route) => false,
+      );
+    } catch (e) {
+      print("Sign out error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Sign out failed. Try again.")),
+      );
+    }
   }
 
   void fetchWeather() async {
@@ -107,6 +123,23 @@ class _DashboardState extends State<Dashboard> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            SizedBox(height: 4.h),
+            Padding(
+              padding: EdgeInsets.only(left: 8.w),
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  "Hello User",
+                  style: TextStyle(
+                    fontSize: 22.sp,
+                    fontWeight: FontWeight.w500,
+                    color: const Color.fromRGBO(21, 10, 10, 1),
+                    letterSpacing: 1,
+                    height: 1.2,
+                  ),
+                ),
+              ),
+            ),
             SizedBox(height: 7.h),
             Padding(
               padding: EdgeInsets.only(right: 8.w),
@@ -133,28 +166,13 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ),
             ),
-            SizedBox(height: 4.h),
-            Padding(
-              padding: EdgeInsets.only(left: 8.w),
-              child: Align(
-                alignment: Alignment.bottomLeft,
-                child: Text(
-                  "Hello User",
-                  style: TextStyle(
-                    fontSize: 22.sp,
-                    fontWeight: FontWeight.w500,
-                    color: const Color.fromRGBO(21, 10, 10, 1),
-                    letterSpacing: 1,
-                    height: 1.2,
-                  ),
-                ),
-              ),
-            ),
+
+
             SizedBox(height: 5.h),
             if (_weatherData != null)
               Card(
                 color: const Color.fromRGBO(255, 255, 255, 0.75),
-                margin: EdgeInsets.symmetric(horizontal: 2.w),
+                margin: EdgeInsets.symmetric(horizontal: 5.w),
                 child: SizedBox(
                   width: double.infinity,
                   child: Padding(
@@ -169,7 +187,7 @@ class _DashboardState extends State<Dashboard> {
                           ),
                         ),
                         Text(
-                          "${_weatherData!['weather'][0]['main']} - ${_weatherData!['main']['temp']}°C",
+                          "${_weatherData!['weather'][0]['main']}   ${_weatherData!['main']['temp']}°C",
                           style: TextStyle(
                             fontSize: 16.sp,
                           ),
@@ -189,14 +207,6 @@ class _DashboardState extends State<Dashboard> {
                 width: double.infinity,
                 child: Column(
                   children: [
-                    SizedBox(
-                      height: 6.h,
-                      width: 6.h,
-                      child: Image.asset(
-                        "assets/images/hero.png",
-                        fit: BoxFit.contain,
-                      ),
-                    ),
                     SizedBox(height: 2.h),
                     Container(
                       color: Colors.white,

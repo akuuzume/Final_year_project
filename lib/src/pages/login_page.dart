@@ -50,8 +50,10 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _signInWithGoogle() async {
     setState(() => _isGoogleLoading = true);
     try {
+      print('Trying to sign in with Google');
       final googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
+        print('Google sign-in was cancelled by the user.');
         setState(() => _isGoogleLoading = false);
         return;
       }
@@ -73,9 +75,11 @@ class _LoginPageState extends State<LoginPage> {
       print('Google sign-in error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Google sign-in failed')),
+          print('Google Auth Tokens: idToken=${googleAuth.idToken}, accessToken=${googleAuth.accessToken}');
+
       );
     } finally {
-      setState(() => _isGoogleLoading = false);
+      setState(() => _isGoogleLoading = true);
     }
   }
 

@@ -28,6 +28,15 @@ android {
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
+    signingConfigs {
+        debug{
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -46,6 +55,8 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
+
+        signingConfig signingConfigs.debug
     }
 
     buildTypes {
@@ -60,3 +71,4 @@ android {
 flutter {
     source = "../.."
 }
+apply plugin: 'com.google.gms.google-services'

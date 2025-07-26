@@ -85,7 +85,7 @@ class _TabBarPageState extends State<TabBarPage> {
                             fontWeight: FontWeight.w500,
                             color: Colors.white,
                             letterSpacing: 1,
-                            height: 0.0,
+
                           ),
                         ),
                       ),
