@@ -4,5 +4,10 @@ service cloud.firestore {
     match /users/{userId}/{document=**} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
+    
+    // Allow authenticated users to read and write to coverSystem
+    match /coverSystem/{document=**} {
+      allow read, write: if request.auth != null;
+    }
   }
 }

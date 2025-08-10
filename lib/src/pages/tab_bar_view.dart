@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/src/pages/dashboard.dart';
 import 'package:mobile_app/src/pages/history.dart';
+import 'package:mobile_app/src/pages/notification_settings.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class TabBarPage extends StatefulWidget {
@@ -25,6 +26,7 @@ class _TabBarPageState extends State<TabBarPage> {
     _pages = [
       const Dashboard(),
       const HistoryPage(),
+      const NotificationSettingsPage(),
     ];
     super.initState();
   }
@@ -57,7 +59,7 @@ class _TabBarPageState extends State<TabBarPage> {
                         child: Text(
                           "Dashboard",
                           style: TextStyle(
-                            fontSize: 17.sp,
+                            fontSize: 15.sp,
                             fontWeight: FontWeight.w500,
                             color: Colors.white,
                             letterSpacing: 1,
@@ -81,11 +83,33 @@ class _TabBarPageState extends State<TabBarPage> {
                         child: Text(
                           "History",
                           style: TextStyle(
-                            fontSize: 17.sp,
+                            fontSize: 15.sp,
                             fontWeight: FontWeight.w500,
                             color: Colors.white,
                             letterSpacing: 1,
-
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 0.2.w),
+              Expanded(
+                child: Material(
+                  color: const Color.fromRGBO(61, 63, 82, 1),
+                  child: InkWell(
+                    onTap: () => _onTap(2),
+                    child: SizedBox(
+                      height: double.infinity,
+                      child: Center(
+                        child: Text(
+                          "Settings",
+                          style: TextStyle(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                            letterSpacing: 1,
                           ),
                         ),
                       ),

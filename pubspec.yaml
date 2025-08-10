@@ -1,58 +1,33 @@
 name: mobile_app
 description: "A new Flutter project."
-publish_to: 'none'
+publish_to: "none"
 
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.4.3 <4.0.0'
-
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-
   cupertino_icons: ^1.0.6
   responsive_sizer: ^3.3.1
+  intl: ^0.19.0
+  firebase_core: ^3.11.0
+  cloud_firestore: ^5.6.0
+  firebase_auth: ^5.4.3
+  firebase_messaging: ^15.2.10
+  flutter_local_notifications: ^18.0.1
+  http: ^1.2.2
 
-
-  firebase_core: any
-  http: any
-  cloud_firestore: any
-  firebase_database: any
-  firebase_auth: any
-  google_sign_in: any
-  device_preview: ^1.3.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  firebase_auth: ^5.6.0
-  firebase_database: ^11.3.7
-  cloud_firestore: ^5.6.9
   email_validator: ^3.0.0
-  http: ^1.4.0
-  cupertino_icons: ^1.0.6
-  responsive_sizer: ^3.3.1
-
   flutter_lints: ^3.0.0
 
-
 flutter:
-
-
   uses-material-design: true
-
   assets:
     - assets/images/
-
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700

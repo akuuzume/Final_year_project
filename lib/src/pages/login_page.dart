@@ -4,8 +4,9 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mobile_app/src/components/auth_input.dart';
 import 'package:mobile_app/src/pages/register.dart';
 import 'package:mobile_app/src/pages/tab_bar_view.dart';
+import 'package:mobile_app/src/services/google_signin_config.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:mobile_app/src/pages/tab_bar_view.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -22,8 +23,6 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
   bool _isGoogleLoading = false;
 
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-
   Future<void> _onSubmitForm() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
@@ -35,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => const TabBarPage()),
-              (Route<dynamic> route) => false,
+          (Route<dynamic> route) => false,
         );
       } on FirebaseAuthException catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -50,36 +49,111 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _signInWithGoogle() async {
     setState(() => _isGoogleLoading = true);
     try {
-      print('Trying to sign in with Google');
-      final googleUser = await _googleSignIn.signIn();
+      print('🔍 Starting Google Sign-In process...');
+      
+      // Use centralized configuration
+      final GoogleSignIn googleSignIn = GoogleSignInConfig.instance;
+      
+      // Sign out first to ensure account picker shows
+      await googleSignIn.signOut();
+      print('🔄 Signed out from previous session');
+      
+      final googleUser = await googleSignIn.signIn();
       if (googleUser == null) {
-        print('Google sign-in was cancelled by the user.');
+        print('❌ Google sign-in was cancelled by the user.');
         setState(() => _isGoogleLoading = false);
         return;
       }
 
+      print('✅ Google user obtained: ${googleUser.email}');
+      
       final googleAuth = await googleUser.authentication;
+      print('🔑 Getting authentication tokens...');
+      
+      // Check if we have the required tokens
+      if (googleAuth.idToken == null) {
+        throw Exception('❌ Failed to get ID token from Google. This usually means SHA-1 fingerprint is not configured in Firebase Console.');
+      }
+      
+      print('✅ ID Token received: ${googleAuth.idToken?.substring(0, 10)}...');
+      
       final credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken,
         accessToken: googleAuth.accessToken,
       );
 
-      await FirebaseAuth.instance.signInWithCredential(credential);
+      print('🔐 Signing in to Firebase...');
+      final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      
+      print('✅ Firebase sign-in successful: ${userCredential.user?.email}');
+      
+      // Store user info in Firestore if it's a new user
+      if (userCredential.additionalUserInfo?.isNewUser ?? false) {
+        print('👤 New user detected, storing profile...');
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .set({
+          'firstName': googleUser.displayName?.split(' ').first ?? '',
+          'lastName': googleUser.displayName?.split(' ').skip(1).join(' ') ?? '',
+          'email': googleUser.email,
+          'photoURL': googleUser.photoUrl,
+          'createdAt': FieldValue.serverTimestamp(),
+          'provider': 'google',
+        });
+        print('✅ User profile stored in Firestore');
+      }
 
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const TabBarPage()),
-            (Route<dynamic> route) => false,
-      );
+      if (mounted) {
+        print('🚀 Navigating to main app...');
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const TabBarPage()),
+          (Route<dynamic> route) => false,
+        );
+      }
     } catch (e) {
-      print('Google sign-in error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Google sign-in failed')),
-          print('Google Auth Tokens: idToken=${googleAuth.idToken}, accessToken=${googleAuth.accessToken}');
-
-      );
+      print('❌ Google sign-in error: $e');
+      
+      String errorMessage = 'Google sign-in failed';
+      if (e.toString().contains('SHA-1') || e.toString().contains('ID token')) {
+        errorMessage = 'Google Sign-In not configured properly. Please add SHA-1 fingerprint to Firebase Console.';
+      } else if (e.toString().contains('network')) {
+        errorMessage = 'Network error. Please check your internet connection.';
+      } else if (e.toString().contains('PlatformException')) {
+        errorMessage = 'Google Play Services error. Please update Google Play Services.';
+      }
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: 'Details',
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Error Details'),
+                    content: Text(e.toString()),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      }
     } finally {
-      setState(() => _isGoogleLoading = true);
+      if (mounted) {
+        setState(() => _isGoogleLoading = false);
+      }
     }
   }
 
@@ -105,9 +179,13 @@ class _LoginPageState extends State<LoginPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 10.h),
-              Text("Welcome to", style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.w500)),
+              Text("Welcome to",
+                  style:
+                      TextStyle(fontSize: 24.sp, fontWeight: FontWeight.w500)),
               SizedBox(height: 4.h),
-              Text("Our clothesline app", style: TextStyle(fontSize: 19.sp, fontWeight: FontWeight.w500)),
+              Text("Our clothesline app",
+                  style:
+                      TextStyle(fontSize: 19.sp, fontWeight: FontWeight.w500)),
               SizedBox(height: 12.h),
               Text(
                 "Please log in to your account to continue",
@@ -119,7 +197,9 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Email or Phone number", style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w500)),
+                    Text("Email or Phone number",
+                        style: TextStyle(
+                            fontSize: 18.sp, fontWeight: FontWeight.w500)),
                     SizedBox(height: 0.2.h),
                     AuthInputField(
                       controller: _emailController,
@@ -127,20 +207,26 @@ class _LoginPageState extends State<LoginPage> {
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return "Enter an email address";
-                        } else if (!RegExp(r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$').hasMatch(value)) {
+                        } else if (!RegExp(
+                                r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$')
+                            .hasMatch(value)) {
                           return "Enter a valid email address";
                         }
                         return null;
                       },
                     ),
                     SizedBox(height: 6.h),
-                    Text("Password", style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w500)),
+                    Text("Password",
+                        style: TextStyle(
+                            fontSize: 18.sp, fontWeight: FontWeight.w500)),
                     SizedBox(height: 0.2.h),
                     AuthInputField(
                       controller: _passwordController,
                       obscureText: true,
                       validator: (value) {
-                        if (value == null || value.isEmpty || value.length < 6) {
+                        if (value == null ||
+                            value.isEmpty ||
+                            value.length < 6) {
                           return "Password must be at least 6 characters";
                         }
                         return null;
@@ -166,7 +252,8 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: _isLoading ? null : _onSubmitForm,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromRGBO(61, 63, 82, 1),
-                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 1.3.h),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 1.3.h),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(3.w),
                   ),
@@ -174,7 +261,11 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 child: _isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
-                    : Text("Login", style: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w700, color: Colors.white)),
+                    : Text("Login",
+                        style: TextStyle(
+                            fontSize: 17.sp,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white)),
               ),
               SizedBox(height: 4.h),
               ElevatedButton.icon(
@@ -183,14 +274,18 @@ class _LoginPageState extends State<LoginPage> {
                     : Image.asset('assets/images/google_logo.png', height: 24),
                 label: Text(
                   _isGoogleLoading ? "Signing in..." : 'Sign in with Google',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
+                  style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.black,
                   minimumSize: const Size(double.infinity, 50),
                   side: const BorderSide(color: Colors.grey),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
                   elevation: 0,
                 ),
                 onPressed: _isGoogleLoading ? null : _signInWithGoogle,
@@ -199,15 +294,19 @@ class _LoginPageState extends State<LoginPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Don’t have an account?", style: TextStyle(fontSize: 16.sp)),
+                  Text("Don’t have an account?",
+                      style: TextStyle(fontSize: 16.sp)),
                   GestureDetector(
                     onTap: () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const RegisterPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const RegisterPage()),
                     ),
                     child: Text(
                       "  Please register",
-                      style: TextStyle(fontSize: 16.sp, color: const Color.fromRGBO(212, 52, 24, 1)),
+                      style: TextStyle(
+                          fontSize: 16.sp,
+                          color: const Color.fromRGBO(212, 52, 24, 1)),
                     ),
                   ),
                 ],
