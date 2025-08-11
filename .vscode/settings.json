@@ -1,4 +1,4 @@
 {
-  "java.configuration.updateBuildConfiguration": "interactive",
+  "java.configuration.updateBuildConfiguration": "automatic",
   "cmake.sourceDirectory": "C:/Users/ofori/Desktop/Final_year_project/linux"
 }
